@@ -1,0 +1,5 @@
+# ninja log v5
+1	32	1682065164985732856	CMakeFiles/screening.dir/parse.c.o	cbd261c85588d57c
+1	50	1682065165002373545	CMakeFiles/screening.dir/main.c.o	e5acecce785aa063
+0	87	1682065165040828319	CMakeFiles/screening.dir/third_party/cJSON/cJSON.c.o	ba8dd37e6329dd1a
+88	123	1682065165076640689	screening	dd07889ba1cc900f
