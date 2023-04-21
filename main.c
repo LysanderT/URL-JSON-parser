@@ -12,6 +12,9 @@ file_get_contents(const char* path)
 	char* buffer;
 
 	file = fopen(path, "r");
+    if(file == NULL){
+        perror("fopen failed \n");
+    }
 	fseek(file, 0, SEEK_END);
 	size = ftell(file);
 	fseek(file, 0, SEEK_SET);
@@ -38,23 +41,29 @@ cJSON_GetObjectSize(const cJSON* object)
 	return 1;						\
 } while (0)
 
-int
-main(void)
+int main(void)
 {
 	char* json_string;
 	cJSON* json;
 	const cJSON* testcases;
 	const cJSON* testcase;
 
-	json_string = file_get_contents("testcases.json");
+	json_string = file_get_contents("../testcases.json");
 	if (!json_string) {
 		return 1;
 	}
+
 	json = cJSON_Parse(json_string);
 	free(json_string);
+
+    if(!json){ // ADDED. maybe failed to parse.
+        return_error();
+    }
+
 	if (!cJSON_IsObject(json)) {
 		return_error();
 	}
+
 	testcases = cJSON_GetObjectItem(json, "testcases");
 	if (!cJSON_IsArray(testcases)) {
 		return_error();
@@ -63,17 +72,29 @@ main(void)
 		const cJSON* input;
 		const cJSON* output;
 		char* url;
-		struct query_parameter* params;
+		struct query_parameter* params = NULL; // CHANGED. pointer should be initialized!!!
 		int count;
 
 		input = cJSON_GetObjectItem(testcase, "input");
 		output = cJSON_GetObjectItem(testcase, "output");
 		url = strdup(input->valuestring);
-		count = parse_query_string(url, &params);
+
+        if (!url) { // ADDED
+            return_error();
+        }
+
+		count = parse_query_string(url, &params); // params has been modified in this line
+
+        if(count < 0){ // check if parse.c goes well
+            free(url);
+            return_error();
+        }
 
 		printf("\ncount %d\n", count);
 		if (count != cJSON_GetObjectSize(output)) {
-			return_error();
+            free(url);
+            free(params);
+            return_error();
 		}
 		for (int i = 0; i < count; i++) {
 			const cJSON* json_value;
@@ -81,13 +102,19 @@ main(void)
 			printf("[%s] = %s\n", params[i].name, params[i].value);
 			json_value = cJSON_GetObjectItem(output, params[i].name);
 			if (!cJSON_IsString(json_value)) {
+                free(url);
+                free(params);
 				return_error();
 			}
 			if (strcmp(json_value->valuestring, params[i].value) != 0) {
+                free(url);
+                free(params);
 				return_error();
 			}
 		}
 		printf("OK\n\n");
+        free(url);
+        free(params);
 	}
 	cJSON_Delete(json);
 	return 0;
