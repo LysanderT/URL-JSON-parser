@@ -21,6 +21,32 @@
 				"t": "h_",
 				"ia": "web"
 			}
+		},
+		{
+			"ADDED TEST": "no query string",
+			"input": "https://perspectivar.com/pc",
+			"output": {
+			}
+		},
+		{
+			"ADDED TEST": "School Website",
+			"input": "https://bb.cuhk.edu.cn/webapps/blackboard/content/listContent.jsp?course_id=_9608_1&content_id=_321040_1&mode=reset",
+			"output": {
+				"course_id": "_9608_1",
+				"content_id": "_321040_1",
+				"mode": "reset"
+			}
+		},
+		{
+			"ADDED TEST": "特殊字符：input时用转义即可",
+			"MORE": "可以用哈希表储存对应的特殊字符及其转义，使最后输出原本字符，但为了方便这里就不实现了",
+			"EXAMPLE": "%3D代表特殊字符=，%26代表特殊字符&，%23代表特殊字符#，等等",
+			"input": "?A=%3D&B=%26&C=%23",
+			"output": {
+				"A": "%3D",
+				"B": "%26",
+				"C": "%23"
+			}
 		}
 	]
 }
