@@ -48,7 +48,7 @@ int main(void)
 	const cJSON* testcases;
 	const cJSON* testcase;
 
-	json_string = file_get_contents("../testcases.json");
+	json_string = file_get_contents("testcases.json");
 	if (!json_string) {
 		return 1;
 	}
